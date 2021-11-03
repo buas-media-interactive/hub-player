@@ -9,6 +9,9 @@
 
 		<!-- Styles, feel free to reuse or to modify to adapt to existing styles -->
 		<style>
+		    /* CSS RESET -- DO NOT INCLUDE IN EMBEDDED PLAYER */
+			* { margin: 0; padding: 0; border: none; font-size: 1em;}
+			/* PLAYER STYLES */
 			.player-widget {
 				display: flex;
 				justify-items: start;
@@ -27,13 +30,16 @@
 				background: none;
 				cursor: pointer;
 			}
-			.play-controls path {
+			.play-controls svg {
 				fill: white;
+			}
+			.now-playing-content {
+				font-weight: bolder;
 			}
 			.artwork {
 				margin: 1em 1em 1em auto;
 				width: 60px;
-				height: 60px;
+				max-height: 60px;
 			}
 			.artwork img {
 				max-height: 100%;
@@ -77,7 +83,7 @@
 						let nowPlaying = result["data"][0];
 						$trackname.text(nowPlaying.song);
 						$artwork.attr({
-							"src": (nowPlaying.track || {}).imageurl || default_image,
+							//"src": (nowPlaying.track || {}).imageurl || default_image,
 							"alt": (nowPlaying.track || {}).album || "Unknown Album"
 						});
 					});
