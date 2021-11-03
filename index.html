@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hub Player Example</title>
+
+		<!-- Same version of jQuery used on hub.buas.nl -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+		<!-- Styles, feel free to reuse or to modify to adapt to existing styles -->
+		<style>
+			.player-widget {
+				display: flex;
+				justify-items: start;
+				align-items: center;
+				background: #ee7622;
+				color: white;
+				font-size: 16px;
+				line-height: 1em;
+				border-radius: 1em;
+				font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans"; /* using the Bootstrap font stack */
+			}
+			.play-controls {
+				margin: 1em;
+				padding: 0;
+				border: none;
+				background: none;
+				cursor: pointer;
+			}
+			.play-controls path {
+				fill: white;
+			}
+			.artwork {
+				margin: 1em 1em 1em auto;
+				width: 60px;
+				height: 60px;
+			}
+			.artwork img {
+				max-height: 100%;
+				max-width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+
+		<!-- Start of player widget -->
+		<div class="player-widget">
+			<button class="play-controls" id="hub-player-control">
+				<svg id="hub-player-play" width="40" height="40" viewbox="0 0 40 40">
+					<path d="M0,0v40L40,20z" />
+				</svg>
+				<svg id="hub-player-pause" style="display: none;" width="40" height="40" viewbox="0 0 40 40">
+					<path d="M5,0v40h10v-40z M25,0v40h10v-40z" />
+				</svg>
+			</button>
+			<audio id="hub-player-audio" style="display: none;" src="https://cast2.my-control-panel.com/proxy/bredauni/stream"></audio>
+			<div class="now-playing">
+				<p class="now-playing-title">Now playing:</p>
+				<p class="now-playing-content" id="hub-player-trackname">&hellip;</p>
+			</div>
+			<div class="artwork">
+				<img id="hub-player-artwork" src="" alt="">
+			</div>
+			<script>
+			$(function() {
+				const data_url = "https://cast2.asurahosting.com:2199/external/rpc.php?m=streaminfo.get&username=bredauni&rid=bredauni";
+				const default_image = "https://hub.buas.nl/wp-content/uploads/2021/04/HUB-Logo-SVG.svg";
+				let audio = document.getElementById("hub-player-audio"),
+				    $playControl = $("#hub-player-control"),
+					$playButton = $("#hub-player-play"),
+					$pauseButton = $("#hub-player-pause"),
+					$trackname = $("#hub-player-trackname"),
+					$artwork = $("#hub-player-artwork");
+				$artwork.attr("src", default_image);
+				function updateSong() {
+					$.get(data_url, function(result) {
+						let nowPlaying = result["data"][0];
+						$trackname.text(nowPlaying.song);
+						$artwork.attr({
+							"src": (nowPlaying.track || {}).imageurl || default_image,
+							"alt": (nowPlaying.track || {}).album || "Unknown Album"
+						});
+					});
+				}
+				$(audio).on("play", function() {
+					$playButton.hide();
+					$pauseButton.show();
+				}).on("pause", function() {
+					$playButton.show();
+					$pauseButton.hide();
+				});
+				$playControl.click(function() {
+					if (audio.paused) {
+						audio.play();
+					} else {
+						audio.pause();
+					}
+				});
+				window.setInterval(updateSong, 15000);
+				updateSong();
+			});
+			</script>
+			<!-- End of player widget -->
+
+		</div>
+	</body>
+</html>
