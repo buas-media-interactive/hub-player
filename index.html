@@ -57,12 +57,14 @@
 				    $playControl = $("#hub-player-control"),
 					$playButton = $("#hub-player-play"),
 					$pauseButton = $("#hub-player-pause");
-				$(audio).on("play", function() {
-					$playButton.hide();
-					$pauseButton.show();
-				}).on("pause", function() {
-					$playButton.show();
-					$pauseButton.hide();
+				$(audio).on("play pause", function() {
+					if (audio.paused) {
+						$playButton.show();
+						$pauseButton.hide();
+					} else {
+						$playButton.hide();
+						$pauseButton.show();
+					}
 				});
 				$playControl.click(function() {
 					if (audio.paused) {
